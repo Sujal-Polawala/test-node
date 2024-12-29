@@ -1,5 +1,5 @@
-service: test-task-node
-frameworkVersion: "3"
+service: weather-service
+frameworkVersion: '3'
 
 custom:
   splitStacks:
@@ -24,6 +24,7 @@ provider:
   lambdaHashingVersion: 20201221
   versionFunctions: false
   environment:
+    NODE_ENV: ${self:custom.NODE_ENV}
     MONGO_DB_URL: ${self:custom.MONGO_DB_URL}
 
 plugins:
@@ -32,19 +33,34 @@ plugins:
   - serverless-plugin-split-stacks
 
 functions:
-
-
-
-  testApi:
-    timeout: 30 # With cold starts this endpoint can be slow
-    memorySize: 512 # default is 1024
-    handler: src/functions/test.handler
-    reservedConcurrency: 4
+  # testApi:
+  #   timeout: 30 # With cold starts this endpoint can be slow
+  #   memorySize: 512 # Default is 1024
+  #   handler: src/functions/test.handler
+  #   reservedConcurrency: 4
+  #   events:
+  #     - http:
+  #         path: '/test'
+  #         method: get
+  #         cors:
+  #           origin: '*'
+  #           allowCredentials: false
+  togglePin:
+    handler: src/functions/handler.togglePin
     events:
       - http:
-          path: "/test"
+          path: api/weather/togglePin
+          method: post
+          cors:
+            origin: '*'
+            allowCredentials: false
+  getWeather:
+    handler: src/functions/handler.getWeather
+    timeout: 30
+    events:
+      - http:
+          path: api/weather
           method: get
           cors:
             origin: '*'
             allowCredentials: false
-
